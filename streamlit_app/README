@@ -1,0 +1,25 @@
+
+
+MODEL DETAILS
+
+This app lets you drag and drop an image of a car, and it will predict what kind of damage it has. The model is trained on third-quarter front and rear views, so the uploaded image should clearly capture either the third-quarter front or rear view of a car.
+
+Used ResNet50 for transfer learning.
+The model was trained on around 1,750 images with 6 target classes.
+
+![app](Screenshot 2026-04-20 114103.png)
+
+Classes:
+
+Front Normal
+Front Crushed
+Front Breakage
+Rear Normal
+Rear Crushed
+Rear Breakage
+The accuracy on the validation set was approximately 80%.
+SETUP
+To get started, first install the dependencies using:
+pip install -r requirements.txt
+Run the Streamlit app:
+streamlit run app/main.py
