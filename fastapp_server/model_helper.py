@@ -5,8 +5,10 @@ from torchvision import models,transforms
 
 
 trained_model=None
-class_names=['Front Breakage', 'Front Crushed', 'Front Normal',
- 'Rear Breakage', 'Rear Crushed', 'Rear Normal']
+class_names = [
+ 'F_Breakage', 'F_Crushed', 'F_Normal',
+ 'R_Breakage', 'R_Crushed', 'R_Normal'
+]
 
 class carclassifierresnet(nn.Module):
     def __init__(self, num_classes=6):
@@ -37,7 +39,7 @@ def predict(image_path):
     transform=transforms.Compose([
         transforms.Resize((224,224)), #model trained on 224*224 ,hence  model expects the size
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485,0.456,0.404],std=[0.229,0.224,0.225])
+        transforms.Normalize(mean=[0.485,0.456,0.406],std=[0.229,0.224,0.225])
     ])
     image_tensor=transform(image).unsqueeze(0) # this outpuy (3,224,224) ,model trained on batches  (32,3,224,224), convert into (1,3,224,224) unsqueeze adds a new dimension
 
@@ -45,7 +47,7 @@ def predict(image_path):
 
     if trained_model is None:
         trained_model=carclassifierresnet()
-        trained_model.load_state_dict(torch.load("model\saved_model.pth")) #loading the trained model parameters
+        trained_model.load_state_dict(torch.load("model/saved_model.pth")) #loading the trained model parameters
         trained_model.eval()
 
     with torch.no_grad():
