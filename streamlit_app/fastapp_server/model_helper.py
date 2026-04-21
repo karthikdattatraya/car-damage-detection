@@ -6,8 +6,7 @@ from torchvision import models, transforms
 trained_model = None
 
 class_names = [
-    'Front Breakage', 'Front Crushed', 'Front Normal',
-    'Rear Breakage', 'Rear Crushed', 'Rear Normal'
+    'F_Breakage','F_Crushed', 'F_Normal', 'R_Breakage', 'R_Crushed', 'R_Normal'
 ]
 
 class carclassifierresnet(nn.Module):

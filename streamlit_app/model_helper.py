@@ -6,12 +6,13 @@ from torchvision import models, transforms
 trained_model = None
 
 class_names = [
-    'Front Breakage', 'Front Crushed', 'Front Normal',
-    'Rear Breakage', 'Rear Crushed', 'Rear Normal'
+    'F_Breakage','F_Crushed', 'F_Normal',
+    'R_Breakage', 'R_Crushed', 'R_Normal'
 ]
 
+
 class carclassifierresnet(nn.Module):
-    def __init__(self, num_classes=6):
+    def __init__(self, num_classes, dropout_rate):
         super().__init__()
         self.model = models.resnet50(weights="DEFAULT")
 
@@ -24,7 +25,7 @@ class carclassifierresnet(nn.Module):
         in_features = self.model.fc.in_features
 
         self.model.fc = nn.Sequential(
-            nn.Dropout(0.2),
+            nn.Dropout(dropout_rate),
             nn.Linear(in_features, num_classes)
         )
 
@@ -32,7 +33,21 @@ class carclassifierresnet(nn.Module):
         return self.model(x)
 
 
+def load_model():
+    global trained_model
+    if trained_model is None:
+        trained_model = carclassifierresnet(num_classes=6, dropout_rate=0.2)
+        trained_model.load_state_dict(
+            torch.load("fastapp_server/model/saved_model.pth",
+                       map_location=torch.device('cpu'))
+        )
+        trained_model.eval()
+    return trained_model
+
+
 def predict(image_path):
+    model = load_model()
+
     image = Image.open(image_path).convert("RGB")
 
     transform = transforms.Compose([
@@ -46,17 +61,8 @@ def predict(image_path):
 
     image_tensor = transform(image).unsqueeze(0)
 
-    global trained_model
-
-    if trained_model is None:
-        trained_model = carclassifierresnet()
-        trained_model.load_state_dict(
-            torch.load("fastapp_server/model/saved_model.pth")
-        )
-        trained_model.eval()
-
     with torch.no_grad():
-        output = trained_model(image_tensor)
+        output = model(image_tensor)
         _, predicted_class = torch.max(output, 1)
 
     return class_names[predicted_class.item()]
