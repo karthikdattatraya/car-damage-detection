@@ -51,7 +51,7 @@ def predict(image_path):
     if trained_model is None:
         trained_model = carclassifierresnet()
         trained_model.load_state_dict(
-            torch.load("../model/saved_model.pth")
+            torch.load("../fastapp_server/model/saved_model.pth")
         )
         trained_model.eval()
 
